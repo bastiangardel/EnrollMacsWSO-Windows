@@ -1,0 +1,169 @@
+<Window x:Class="EnrollMacsWSO.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:EnrollMacsWSO.Views"
+        Title="Affectation des machines dans WSO"
+        MinWidth="1000" MinHeight="500"
+        Width="1300" Height="650"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ── Title Bar ── -->
+        <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" Padding="16,10">
+            <Grid>
+                <TextBlock x:Name="TitleText"
+                           Text="Affectation des machines dans WSO"
+                           Foreground="White" FontSize="16" FontWeight="SemiBold"
+                           VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Border x:Name="TestModeBadge" Background="{StaticResource AccentBrush}"
+                            CornerRadius="4" Padding="8,3" Margin="0,0,10,0"
+                            Visibility="Collapsed">
+                        <TextBlock Text="MODE TEST" Foreground="White" FontSize="11" FontWeight="Bold"/>
+                    </Border>
+                    <ToggleButton x:Name="TestModeToggle" Content="Test Mode"
+                                  Checked="TestModeToggle_Changed" Unchecked="TestModeToggle_Changed"
+                                  Padding="8,3" FontSize="12" Foreground="White"
+                                  Background="Transparent" BorderBrush="White" BorderThickness="1"
+                                  Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- ── Progress Bar ── -->
+        <Border Grid.Row="1" x:Name="ProgressPanel" Visibility="Collapsed"
+                Background="#EEF4FB" Padding="16,8" BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,0,1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ProgressBar x:Name="SendProgressBar" Height="12" Minimum="0" Maximum="100"
+                             Value="0" Foreground="{StaticResource PrimaryBrush}"/>
+                <TextBlock x:Name="ProgressLabel" Grid.Row="1" Text="Progression : 0%"
+                           FontSize="12" FontWeight="SemiBold" Margin="0,4,0,0"
+                           Foreground="{StaticResource PrimaryBrush}"/>
+            </Grid>
+        </Border>
+
+        <!-- ── Column Headers ── -->
+        <Border Grid.Row="2" Background="#F0F0F0"
+                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,0,1">
+            <Grid Margin="20,0,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" x:Name="SortFriendlyName" Content="Friendly Name ↕"
+                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
+                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
+                        Padding="4,8" Click="Sort_Click" Tag="friendlyName"/>
+                <Button Grid.Column="1" x:Name="SortEndUserName" Content="End User Name ↕"
+                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
+                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
+                        Padding="4,8" Click="Sort_Click" Tag="endUserName"/>
+                <Button Grid.Column="2" x:Name="SortAssetNumber" Content="Asset Number ↕"
+                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
+                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
+                        Padding="4,8" Click="Sort_Click" Tag="assetNumber"/>
+                <Button Grid.Column="3" x:Name="SortLocationGroup" Content="Location Group ID ↕"
+                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
+                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
+                        Padding="4,8" Click="Sort_Click" Tag="locationGroupId"/>
+                <Button Grid.Column="4" x:Name="SortSerial" Content="Serial Number ↕"
+                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
+                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
+                        Padding="4,8" Click="Sort_Click" Tag="serialNumber"/>
+            </Grid>
+        </Border>
+
+        <!-- ── Machine List ── -->
+        <ListView Grid.Row="3" x:Name="MachineListView"
+                  SelectionMode="Extended"
+                  MouseDoubleClick="MachineListView_DoubleClick"
+                  Background="White"
+                  BorderThickness="0"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  VirtualizingPanel.IsVirtualizing="True">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Setter Property="Padding" Value="20,6,8,6"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#CCE4F7"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#EEF4FB"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding FriendlyName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Column="1" Text="{Binding EndUserName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Column="2" Text="{Binding AssetNumber}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Grid.Column="3" Text="{Binding LocationGroupId}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="4" Text="{Binding SerialNumber}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- ── Status Message ── -->
+        <Border Grid.Row="4" x:Name="StatusBorder" Visibility="Collapsed"
+                Padding="16,6" Background="#FFF8E1" BorderBrush="#FFD54F" BorderThickness="0,1,0,0">
+            <TextBlock x:Name="StatusText" FontSize="13" Foreground="#795548" TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- ── Action Buttons ── -->
+        <Border Grid.Row="5" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,1,0,0"
+                Padding="16,10">
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="➕  Ajouter une machine" Margin="4"
+                        Style="{StaticResource PrimaryButton}"
+                        Click="AddMachine_Click" x:Name="AddMachineBtn"/>
+                <Button Content="📂  Importer via CSV" Margin="4"
+                        Click="ImportCsv_Click" x:Name="ImportCsvBtn"/>
+                <Button Content="🔍  Détails Machine" Margin="4"
+                        Click="DetailsMachine_Click" x:Name="DetailsBtn"/>
+                <Button Content="🗑  Supprimer sélectionnées" Margin="4"
+                        Click="DeleteSelected_Click" x:Name="DeleteSelectedBtn"/>
+                <Button Content="🗑  Supprimer tout" Margin="4"
+                        Style="{StaticResource DangerButton}"
+                        Click="DeleteAll_Click" x:Name="DeleteAllBtn"/>
+                <Button Content="📤  Envoyer" Margin="4"
+                        Style="{StaticResource PrimaryButton}"
+                        Click="Send_Click" x:Name="SendBtn"/>
+                <Button Content="⚙  Editer Config" Margin="4"
+                        Click="EditConfig_Click" x:Name="EditConfigBtn"/>
+                <Button Content="✖  Quitter" Margin="4"
+                        Style="{StaticResource DangerButton}"
+                        Click="CloseApp_Click"/>
+            </WrapPanel>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,86 @@
+<Window x:Class="EnrollMacsWSO.Views.CsvImportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Importer via CSV"
+        Width="560" Height="420"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Importer via CSV" Style="{StaticResource H1}" Margin="0,0,0,16"/>
+
+        <StackPanel Grid.Row="1">
+
+            <!-- name.csv -->
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="32"/></Grid.ColumnDefinitions>
+                <Button Content="📄  Sélectionner name.csv" HorizontalContentAlignment="Left"
+                        Click="PickName_Click" x:Name="PickNameBtn"/>
+                <TextBlock Grid.Column="1" x:Name="NameCheck" Text="✔" Foreground="{StaticResource SuccessBrush}"
+                           FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           Visibility="Collapsed"/>
+            </Grid>
+
+            <!-- ocs.csv -->
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="32"/></Grid.ColumnDefinitions>
+                <Button Content="📄  Sélectionner ocs.csv" HorizontalContentAlignment="Left"
+                        Click="PickOcs_Click" x:Name="PickOcsBtn"/>
+                <TextBlock Grid.Column="1" x:Name="OcsCheck" Text="✔" Foreground="{StaticResource SuccessBrush}"
+                           FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           Visibility="Collapsed"/>
+            </Grid>
+
+            <!-- inventory.csv -->
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="32"/></Grid.ColumnDefinitions>
+                <Button Content="📄  Sélectionner inventory.csv" HorizontalContentAlignment="Left"
+                        Click="PickInventory_Click" x:Name="PickInventoryBtn"/>
+                <TextBlock Grid.Column="1" x:Name="InventoryCheck" Text="✔" Foreground="{StaticResource SuccessBrush}"
+                           FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           Visibility="Collapsed"/>
+            </Grid>
+
+            <Separator Margin="0,8"/>
+
+            <!-- missing.csv output -->
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="32"/></Grid.ColumnDefinitions>
+                <Button Content="💾  Chemin pour missing.csv" HorizontalContentAlignment="Left"
+                        Click="PickMissing_Click" x:Name="PickMissingBtn"/>
+                <TextBlock Grid.Column="1" x:Name="MissingCheck" Text="✔" Foreground="{StaticResource SuccessBrush}"
+                           FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           Visibility="Collapsed"/>
+            </Grid>
+
+            <!-- doublons.csv output -->
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="32"/></Grid.ColumnDefinitions>
+                <Button Content="💾  Chemin pour doublons.csv" HorizontalContentAlignment="Left"
+                        Click="PickDoublons_Click" x:Name="PickDoublonsBtn"/>
+                <TextBlock Grid.Column="1" x:Name="DoublonsCheck" Text="✔" Foreground="{StaticResource SuccessBrush}"
+                           FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           Visibility="Collapsed"/>
+            </Grid>
+        </StackPanel>
+
+        <!-- Error -->
+        <TextBlock Grid.Row="2" x:Name="ErrorText" Foreground="Red" TextWrapping="Wrap"
+                   Margin="0,8" Visibility="Collapsed"/>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,0">
+            <Button Content="📥  Importer" Style="{StaticResource PrimaryButton}"
+                    Margin="0,0,12,0" Click="Import_Click" x:Name="ImportBtn" IsEnabled="False"/>
+            <Button Content="Annuler" Click="Cancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

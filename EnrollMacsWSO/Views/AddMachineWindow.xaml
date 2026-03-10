@@ -1,0 +1,201 @@
+<Window x:Class="EnrollMacsWSO.Views.AddMachineWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Ajouter une machine"
+        Width="820" Height="640"
+        MinWidth="700" MinHeight="540"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Background="{StaticResource PrimaryBrush}" Padding="20,12">
+            <TextBlock Text="Ajouter une machine" Foreground="White" FontSize="15" FontWeight="SemiBold"/>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="24,16">
+
+                <!-- Text fields -->
+                <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Informations de base" Style="{StaticResource H2}" Margin="0,0,0,12"/>
+
+                        <!-- Username -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="190"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Username" Style="{StaticResource Label}"/>
+                                <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBox Grid.Column="1" x:Name="UsernameBox" TextChanged="UsernameBox_TextChanged"/>
+                        </Grid>
+
+                        <!-- SCIPER -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="190"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="SCIPER" Style="{StaticResource Label}"/>
+                                <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBox Grid.Column="1" x:Name="SciperBox"/>
+                        </Grid>
+
+                        <!-- Asset Number -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="190"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Numéro d'inventaire" Style="{StaticResource Label}"/>
+                                <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBox Grid.Column="1" x:Name="AssetNumberBox" TextChanged="AssetNumberBox_TextChanged"/>
+                        </Grid>
+
+                        <!-- Serial Number -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="190"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Numéro de série" Style="{StaticResource Label}"/>
+                                <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBox Grid.Column="1" x:Name="SerialNumberBox"/>
+                        </Grid>
+
+                        <!-- Friendly Name (auto) -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="190"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <TextBlock Text="Friendly Name (auto)" Style="{StaticResource Label}" Foreground="{StaticResource SubtleBrush}"/>
+                            <TextBox Grid.Column="1" x:Name="FriendlyNameBox" IsReadOnly="True"
+                                     Background="#F0F0F0" Foreground="{StaticResource SubtleBrush}"/>
+                        </Grid>
+
+                        <!-- Email -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="190"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="110"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Email" Style="{StaticResource Label}"/>
+                                <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBox Grid.Column="1" x:Name="EmailBox" Margin="0,0,8,0"/>
+                            <Button Grid.Column="2" x:Name="LoadEmailBtn" Content="Load email"
+                                    Click="LoadEmail_Click" Padding="6,4" FontSize="12"/>
+                        </Grid>
+                        <TextBlock x:Name="LdapMessage" Foreground="DarkOrange" FontSize="12"
+                                   Margin="190,2,0,0" Visibility="Collapsed" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Options grid - ligne 1 -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Employee Type -->
+                    <Border Grid.Column="0" BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="12" Margin="0,0,8,0">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock Text="Employee Type" Style="{StaticResource H2}"/>
+                                <TextBlock Text=" *" Foreground="Red" FontSize="14" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <RadioButton Content="Personnel"  x:Name="EmpPersonnel"  GroupName="EmployeeType" Checked="EmployeeType_Changed"/>
+                            <RadioButton Content="Hôte"       x:Name="EmpHote"       GroupName="EmployeeType" Checked="EmployeeType_Changed" Margin="0,4,0,0"/>
+                            <RadioButton Content="Hors-EPFL"  x:Name="EmpHorsEPFL"   GroupName="EmployeeType" Checked="EmployeeType_Changed" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Device Type -->
+                    <Border Grid.Column="1" BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="12" Margin="0,0,8,0">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <TextBlock Text="Device Type" Style="{StaticResource H2}"/>
+                                <TextBlock Text=" *" Foreground="Red" FontSize="14" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <RadioButton Content="Laptop"      x:Name="DevLaptop"      GroupName="DeviceType" Checked="DeviceType_Changed"/>
+                            <RadioButton Content="Workstation" x:Name="DevWorkstation"  GroupName="DeviceType" Checked="DeviceType_Changed" Margin="0,4,0,0"/>
+                            <RadioButton Content="Mobile"      x:Name="DevMobile"       GroupName="DeviceType" Checked="DeviceType_Changed" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- VPN Guest -->
+                    <Border Grid.Column="2" BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="12" Margin="0,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="VPN Guest" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                            <RadioButton Content="(Aucun)" x:Name="VpnNone" GroupName="VPN" IsChecked="True"/>
+                            <RadioButton Content="SSC"     x:Name="VpnSSC"  GroupName="VPN" Margin="0,4,0,0"/>
+                            <RadioButton Content="AGA"     x:Name="VpnAGA"  GroupName="VPN" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Options grid - ligne 2 -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- FileMaker -->
+                    <Border Grid.Column="0" BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="12" Margin="0,0,8,0">
+                        <StackPanel>
+                            <TextBlock Text="FileMaker" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                            <RadioButton Content="(Aucun)"    x:Name="FmNone"   GroupName="FileMaker" IsChecked="True"/>
+                            <RadioButton Content="TTO-AJ"     x:Name="FmTTO"    GroupName="FileMaker" Margin="0,4,0,0"/>
+                            <RadioButton Content="OHSPR-DSE"  x:Name="FmOHSPR"  GroupName="FileMaker" Margin="0,4,0,0"/>
+                            <RadioButton Content="Autres"     x:Name="FmAutres" GroupName="FileMaker" Margin="0,4,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Tableau -->
+                    <Border Grid.Column="1" BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="12" Margin="0,0,8,0">
+                        <StackPanel>
+                            <TextBlock Text="Tableau" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                            <CheckBox Content="Desktop" x:Name="TableauDesktop"/>
+                            <CheckBox Content="Prep"    x:Name="TableauPrep" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Options -->
+                    <Border Grid.Column="2" BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="1"
+                            CornerRadius="6" Padding="12" Margin="0,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="Options" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                            <CheckBox Content="MindManager"          x:Name="MindManager"/>
+                            <CheckBox Content="Pas de Lina"          x:Name="LinaException"   Margin="0,6,0,0"/>
+                            <CheckBox Content="Exception Acrobat Pro" x:Name="AcrobatException" Margin="0,6,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer buttons -->
+        <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,1,0,0" Padding="24,12">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="✔  Ajouter" Style="{StaticResource PrimaryButton}"
+                        Margin="0,0,12,0" Click="Add_Click" x:Name="AddBtn"/>
+                <Button Content="Annuler" Click="Cancel_Click"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
