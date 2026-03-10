@@ -7,7 +7,11 @@ namespace EnrollMacsWSO.Views
 {
     public partial class CredentialPromptWindow : Window
     {
-        public CredentialPromptWindow() => InitializeComponent();
+        public CredentialPromptWindow()
+        {
+            InitializeComponent();
+            UsernameBox.Text = $@"INTRANET\{Environment.UserName}";
+        }
 
         private void Password_KeyDown(object sender, KeyEventArgs e)
         {
