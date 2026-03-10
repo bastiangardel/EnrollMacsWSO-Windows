@@ -1,6 +1,7 @@
 using EnrollMacsWSO.Models;
 using EnrollMacsWSO.Services;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,21 +20,47 @@ namespace EnrollMacsWSO.Views
         {
             InitializeComponent();
             MachineListView.ItemsSource = _machines;
+
+            // Recalculer les boutons à chaque changement de collection ou de sélection
+            _machines.CollectionChanged += (_, _) => RefreshButtons();
+            MachineListView.SelectionChanged += (_, _) => RefreshButtons();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             RefreshTestModeUI();
+            RefreshButtons();
 
-            // Brancher le clic sur les en-têtes de colonnes via AddHandler
             MachineListView.AddHandler(
                 GridViewColumnHeader.ClickEvent,
                 new RoutedEventHandler(GridHeader_Click));
 
-            // First-run: show config if not yet configured
             var cfg = ConfigManager.Instance.Load();
             if (!cfg.IsConfigured)
                 ShowConfigDialog();
+        }
+
+        // ── Boutons : état centralisé ─────────────────────────────────────────
+
+        private void RefreshButtons()
+        {
+            int selCount  = MachineListView.SelectedItems.Count;
+            int total     = _machines.Count;
+            bool idle     = !_isProcessing;
+
+            AddMachineBtn.IsEnabled      = idle;
+            ImportCsvBtn.IsEnabled       = idle;
+            EditConfigBtn.IsEnabled      = idle;
+            DetailsBtn.IsEnabled         = idle && selCount == 1;
+            DeleteSelectedBtn.IsEnabled  = idle && selCount > 0;
+            DeleteAllBtn.IsEnabled       = idle && total > 0;
+            SendBtn.IsEnabled            = idle && total > 0;
+        }
+
+        private void SetProcessing(bool processing)
+        {
+            _isProcessing = processing;
+            RefreshButtons();
         }
 
         // ── Test Mode ────────────────────────────────────────────────────────
@@ -84,21 +111,21 @@ namespace EnrollMacsWSO.Views
 
             var sorted = key switch
             {
-                "friendlyName" => _sortAscending
-                    ? _machines.OrderBy(m => m.FriendlyName, StringComparer.OrdinalIgnoreCase)
-                    : _machines.OrderByDescending(m => m.FriendlyName, StringComparer.OrdinalIgnoreCase),
-                "endUserName" => _sortAscending
-                    ? _machines.OrderBy(m => m.EndUserName, StringComparer.OrdinalIgnoreCase)
-                    : _machines.OrderByDescending(m => m.EndUserName, StringComparer.OrdinalIgnoreCase),
-                "assetNumber" => _sortAscending
-                    ? _machines.OrderBy(m => m.AssetNumber, StringComparer.OrdinalIgnoreCase)
-                    : _machines.OrderByDescending(m => m.AssetNumber, StringComparer.OrdinalIgnoreCase),
-                "locationGroupId" => _sortAscending
+                "friendlyName"   => _sortAscending
+                    ? _machines.OrderBy(m => m.FriendlyName,    StringComparer.OrdinalIgnoreCase)
+                    : _machines.OrderByDescending(m => m.FriendlyName,    StringComparer.OrdinalIgnoreCase),
+                "endUserName"    => _sortAscending
+                    ? _machines.OrderBy(m => m.EndUserName,     StringComparer.OrdinalIgnoreCase)
+                    : _machines.OrderByDescending(m => m.EndUserName,     StringComparer.OrdinalIgnoreCase),
+                "assetNumber"    => _sortAscending
+                    ? _machines.OrderBy(m => m.AssetNumber,     StringComparer.OrdinalIgnoreCase)
+                    : _machines.OrderByDescending(m => m.AssetNumber,     StringComparer.OrdinalIgnoreCase),
+                "locationGroupId"=> _sortAscending
                     ? _machines.OrderBy(m => m.LocationGroupId)
                     : _machines.OrderByDescending(m => m.LocationGroupId),
-                "serialNumber" => _sortAscending
-                    ? _machines.OrderBy(m => m.SerialNumber, StringComparer.OrdinalIgnoreCase)
-                    : _machines.OrderByDescending(m => m.SerialNumber, StringComparer.OrdinalIgnoreCase),
+                "serialNumber"   => _sortAscending
+                    ? _machines.OrderBy(m => m.SerialNumber,    StringComparer.OrdinalIgnoreCase)
+                    : _machines.OrderByDescending(m => m.SerialNumber,    StringComparer.OrdinalIgnoreCase),
                 _ => (IOrderedEnumerable<Machine>)_machines.OrderBy(m => m.FriendlyName)
             };
 
@@ -175,7 +202,6 @@ namespace EnrollMacsWSO.Views
         {
             if (_machines.Count == 0) { ShowStatus("Aucune machine à envoyer."); return; }
 
-            // Windows credential prompt via UAC / login dialog
             bool authenticated = AuthenticateUser();
             if (!authenticated)
             {
@@ -208,7 +234,6 @@ namespace EnrollMacsWSO.Views
                 ProgressLabel.Text = $"Progression : {(int)pct}%";
             }
 
-            // Remove successfully sent machines
             foreach (var m in machineList.Except(failed))
                 _machines.Remove(m);
 
@@ -235,23 +260,8 @@ namespace EnrollMacsWSO.Views
 
         private bool AuthenticateUser()
         {
-            // On Windows, we use a simple password dialog as credential confirmation.
-            // For stronger auth, Windows Hello / Windows Security can be invoked via
-            // Windows.Security.Credentials.UI.UserConsentVerifier (requires WinRT reference).
             var dlg = new CredentialPromptWindow { Owner = this };
             return dlg.ShowDialog() == true;
-        }
-
-        private void SetProcessing(bool processing)
-        {
-            _isProcessing = processing;
-            AddMachineBtn.IsEnabled = !processing;
-            ImportCsvBtn.IsEnabled = !processing;
-            DetailsBtn.IsEnabled = !processing && MachineListView.SelectedItems.Count == 1;
-            DeleteSelectedBtn.IsEnabled = !processing && MachineListView.SelectedItems.Count > 0;
-            DeleteAllBtn.IsEnabled = !processing && _machines.Count > 0;
-            SendBtn.IsEnabled = !processing && _machines.Count > 0;
-            EditConfigBtn.IsEnabled = !processing;
         }
 
         private System.Threading.CancellationTokenSource? _statusCts;
@@ -269,7 +279,7 @@ namespace EnrollMacsWSO.Views
                 await Task.Delay(TimeSpan.FromSeconds(seconds), token);
                 StatusBorder.Visibility = Visibility.Collapsed;
             }
-            catch (TaskCanceledException) { /* superseded by a newer message */ }
+            catch (TaskCanceledException) { }
         }
     }
 }
