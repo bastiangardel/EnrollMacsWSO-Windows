@@ -23,7 +23,8 @@ namespace EnrollMacsWSO.Views
             UpdateAddButton();
         }
 
-        private void UsernameBox_TextChanged(object sender, TextChangedEventArgs e)
+        // Handler partagé pour tous les champs texte obligatoires
+        private void RequiredField_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateAddButton();
         }

@@ -34,7 +34,7 @@
                                 <TextBlock Text="Username" Style="{StaticResource Label}"/>
                                 <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBox Grid.Column="1" x:Name="UsernameBox" TextChanged="UsernameBox_TextChanged"/>
+                            <TextBox Grid.Column="1" x:Name="UsernameBox" TextChanged="RequiredField_TextChanged"/>
                         </Grid>
 
                         <!-- SCIPER -->
@@ -44,7 +44,7 @@
                                 <TextBlock Text="SCIPER" Style="{StaticResource Label}"/>
                                 <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBox Grid.Column="1" x:Name="SciperBox"/>
+                            <TextBox Grid.Column="1" x:Name="SciperBox" TextChanged="RequiredField_TextChanged"/>
                         </Grid>
 
                         <!-- Asset Number -->
@@ -64,7 +64,7 @@
                                 <TextBlock Text="Numéro de série" Style="{StaticResource Label}"/>
                                 <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBox Grid.Column="1" x:Name="SerialNumberBox"/>
+                            <TextBox Grid.Column="1" x:Name="SerialNumberBox" TextChanged="RequiredField_TextChanged"/>
                         </Grid>
 
                         <!-- Friendly Name (auto) -->
@@ -86,7 +86,7 @@
                                 <TextBlock Text="Email" Style="{StaticResource Label}"/>
                                 <TextBlock Text=" *" Foreground="Red" VerticalAlignment="Center"/>
                             </StackPanel>
-                            <TextBox Grid.Column="1" x:Name="EmailBox" Margin="0,0,8,0"/>
+                            <TextBox Grid.Column="1" x:Name="EmailBox" Margin="0,0,8,0" TextChanged="RequiredField_TextChanged"/>
                             <Button Grid.Column="2" x:Name="LoadEmailBtn" Content="Load email"
                                     Click="LoadEmail_Click" Padding="6,4" FontSize="12"/>
                         </Grid>

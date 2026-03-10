@@ -12,7 +12,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -56,52 +55,17 @@
             </Grid>
         </Border>
 
-        <!-- ── Column Headers ── -->
-        <Border Grid.Row="2" Background="#F0F0F0"
-                BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,0,0,1">
-            <Grid Margin="20,0,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" x:Name="SortFriendlyName" Content="Friendly Name ↕"
-                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
-                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
-                        Padding="4,8" Click="Sort_Click" Tag="friendlyName"/>
-                <Button Grid.Column="1" x:Name="SortEndUserName" Content="End User Name ↕"
-                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
-                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
-                        Padding="4,8" Click="Sort_Click" Tag="endUserName"/>
-                <Button Grid.Column="2" x:Name="SortAssetNumber" Content="Asset Number ↕"
-                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
-                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
-                        Padding="4,8" Click="Sort_Click" Tag="assetNumber"/>
-                <Button Grid.Column="3" x:Name="SortLocationGroup" Content="Location Group ID ↕"
-                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
-                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
-                        Padding="4,8" Click="Sort_Click" Tag="locationGroupId"/>
-                <Button Grid.Column="4" x:Name="SortSerial" Content="Serial Number ↕"
-                        Style="{StaticResource {x:Type Button}}" Background="Transparent"
-                        BorderThickness="0" FontWeight="SemiBold" HorizontalContentAlignment="Left"
-                        Padding="4,8" Click="Sort_Click" Tag="serialNumber"/>
-            </Grid>
-        </Border>
-
-        <!-- ── Machine List ── -->
-        <ListView Grid.Row="3" x:Name="MachineListView"
+        <!-- ── Machine List (GridView = headers auto-alignés avec les cellules) ── -->
+        <ListView Grid.Row="2" x:Name="MachineListView"
                   SelectionMode="Extended"
                   MouseDoubleClick="MachineListView_DoubleClick"
                   Background="White"
                   BorderThickness="0"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                   VirtualizingPanel.IsVirtualizing="True">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                    <Setter Property="Padding" Value="20,6,8,6"/>
+                    <Setter Property="Padding" Value="4,5"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Background" Value="#CCE4F7"/>
@@ -112,34 +76,90 @@
                     </Style.Triggers>
                 </Style>
             </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding FriendlyName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Column="1" Text="{Binding EndUserName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Column="2" Text="{Binding AssetNumber}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Grid.Column="3" Text="{Binding LocationGroupId}" VerticalAlignment="Center"/>
-                        <TextBlock Grid.Column="4" Text="{Binding SerialNumber}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
+            <ListView.Resources>
+                <!-- Style des en-têtes de colonnes cliquables -->
+                <Style TargetType="GridViewColumnHeader">
+                    <Setter Property="Background" Value="#F0F0F0"/>
+                    <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="FontSize" Value="13"/>
+                    <Setter Property="Padding" Value="8,7"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource AppBorderBrush}"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="GridViewColumnHeader">
+                                <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#E0E8F4"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Background" Value="#CCE4F7"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView x:Name="MainGridView">
+                    <GridViewColumn x:Name="ColFriendlyName"  Header="Friendly Name ↕"  Width="220">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding FriendlyName}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="ColEndUserName"   Header="End User Name ↕"  Width="180">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding EndUserName}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="ColAssetNumber"   Header="Asset Number ↕"   Width="160">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AssetNumber}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="ColLocationGroup" Header="Location Group ID ↕" Width="160">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding LocationGroupId}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="ColSerial"        Header="Serial Number ↕"  Width="180">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding SerialNumber}" TextTrimming="CharacterEllipsis"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
         </ListView>
 
         <!-- ── Status Message ── -->
-        <Border Grid.Row="4" x:Name="StatusBorder" Visibility="Collapsed"
+        <Border Grid.Row="3" x:Name="StatusBorder" Visibility="Collapsed"
                 Padding="16,6" Background="#FFF8E1" BorderBrush="#FFD54F" BorderThickness="0,1,0,0">
             <TextBlock x:Name="StatusText" FontSize="13" Foreground="#795548" TextWrapping="Wrap"/>
         </Border>
 
         <!-- ── Action Buttons ── -->
-        <Border Grid.Row="5" Background="{StaticResource SurfaceBrush}"
+        <Border Grid.Row="4" Background="{StaticResource SurfaceBrush}"
                 BorderBrush="{StaticResource AppBorderBrush}" BorderThickness="0,1,0,0"
                 Padding="16,10">
             <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center">

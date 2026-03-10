@@ -6,6 +6,28 @@
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False">
 
+    <Window.Resources>
+        <!-- Template partagé pour une ligne label / valeur -->
+        <DataTemplate x:Key="InfoRowTemplate">
+            <Border Background="#F5F5F5" CornerRadius="5" Margin="0,2" Padding="8,5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{Binding Label}"
+                               FontWeight="SemiBold" FontSize="13"
+                               TextWrapping="Wrap"/>
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding Value}"
+                               FontSize="13"
+                               TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,19 +41,21 @@
 
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="16">
             <StackPanel>
-                <!-- Section: Informations générales -->
+                <!-- Section : Informations générales -->
                 <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,12">
                     <StackPanel>
                         <TextBlock Text="Informations générales" Style="{StaticResource H2}" Margin="0,0,0,10"/>
-                        <ItemsControl x:Name="GeneralInfo"/>
+                        <ItemsControl x:Name="GeneralInfo"
+                                      ItemTemplate="{StaticResource InfoRowTemplate}"/>
                     </StackPanel>
                 </Border>
 
-                <!-- Section: Sélections -->
+                <!-- Section : Sélections -->
                 <Border Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="16">
                     <StackPanel>
                         <TextBlock Text="Sélections" Style="{StaticResource H2}" Margin="0,0,0,10"/>
-                        <ItemsControl x:Name="SelectionInfo"/>
+                        <ItemsControl x:Name="SelectionInfo"
+                                      ItemTemplate="{StaticResource InfoRowTemplate}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>

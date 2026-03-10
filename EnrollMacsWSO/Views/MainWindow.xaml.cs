@@ -25,6 +25,11 @@ namespace EnrollMacsWSO.Views
         {
             RefreshTestModeUI();
 
+            // Brancher le clic sur les en-têtes de colonnes via AddHandler
+            MachineListView.AddHandler(
+                GridViewColumnHeader.ClickEvent,
+                new RoutedEventHandler(GridHeader_Click));
+
             // First-run: show config if not yet configured
             var cfg = ConfigManager.Instance.Load();
             if (!cfg.IsConfigured)
@@ -53,10 +58,18 @@ namespace EnrollMacsWSO.Views
 
         // ── Sorting ───────────────────────────────────────────────────────────
 
-        private void Sort_Click(object sender, RoutedEventArgs e)
+        private void GridHeader_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.Tag is string key)
-                SortMachines(key);
+            if (e.OriginalSource is not GridViewColumnHeader header) return;
+
+            string? key = null;
+            if      (header.Column == ColFriendlyName)  key = "friendlyName";
+            else if (header.Column == ColEndUserName)   key = "endUserName";
+            else if (header.Column == ColAssetNumber)   key = "assetNumber";
+            else if (header.Column == ColLocationGroup) key = "locationGroupId";
+            else if (header.Column == ColSerial)        key = "serialNumber";
+
+            if (key != null) SortMachines(key);
         }
 
         private void SortMachines(string key)
