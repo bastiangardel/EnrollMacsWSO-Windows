@@ -175,8 +175,16 @@ namespace EnrollMacsWSO.Views
 
         private void ShowDetails(Machine m)
         {
+            int index = _machines.IndexOf(m);
+            if (index < 0) return;
+
             var dlg = new DetailsMachineWindow(m) { Owner = this };
-            dlg.ShowDialog();
+            if (dlg.ShowDialog() == true && dlg.Result != null)
+            {
+                _machines[index] = dlg.Result;
+                SortMachines(_sortKey);
+                ShowStatus($"Machine '{dlg.Result.FriendlyName}' mise à jour avec succès !");
+            }
         }
 
         private void DeleteSelected_Click(object sender, RoutedEventArgs e)
