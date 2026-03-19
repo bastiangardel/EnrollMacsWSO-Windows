@@ -107,8 +107,6 @@ namespace EnrollMacsWSO.Services
                 MessageType = RegGetInt("MessageType", 0),
                 SambaPath = RegGet("SambaPath"),
                 SambaUsername = RegGet("SambaUsername"),
-                LdapServer = RegGet("LdapServer"),
-                LdapBaseDN = RegGet("LdapBaseDN", "o=epfl,c=ch"),
                 IsTestMode = RegGetBool("IsTestMode", false),
                 IsConfigured = RegGetBool("IsConfigured", false)
             };
@@ -121,8 +119,6 @@ namespace EnrollMacsWSO.Services
             RegSet("MessageType", config.MessageType);
             RegSet("SambaPath", config.SambaPath);
             RegSet("SambaUsername", config.SambaUsername);
-            RegSet("LdapServer", config.LdapServer);
-            RegSet("LdapBaseDN", config.LdapBaseDN);
             RegSet("IsTestMode", config.IsTestMode ? 1 : 0);
             RegSet("IsConfigured", config.IsConfigured ? 1 : 0);
             SaveSambaPassword(sambaPassword);

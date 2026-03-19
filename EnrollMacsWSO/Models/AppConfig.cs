@@ -7,8 +7,6 @@ namespace EnrollMacsWSO.Models
         public int MessageType { get; set; } = 0;
         public string SambaPath { get; set; } = "";
         public string SambaUsername { get; set; } = "";
-        public string LdapServer { get; set; } = "";
-        public string LdapBaseDN { get; set; } = "o=epfl,c=ch";
         public bool IsTestMode { get; set; } = false;
         public bool IsConfigured { get; set; } = false;
     }

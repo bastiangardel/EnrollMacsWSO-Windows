@@ -20,8 +20,6 @@ namespace EnrollMacsWSO.Views
             MessageTypeBox.Text = cfg.MessageType.ToString();
             SambaPathBox.Text = cfg.SambaPath;
             SambaUsernameBox.Text = cfg.SambaUsername;
-            LdapServerBox.Text = cfg.LdapServer;
-            LdapBaseDNBox.Text = cfg.LdapBaseDN;
             SambaPasswordBox.Password = ConfigManager.Instance.LoadSambaPassword();
         }
 
@@ -39,15 +37,13 @@ namespace EnrollMacsWSO.Views
 
             var cfg = new AppConfig
             {
-                PlatformId = int.TryParse(PlatformIdBox.Text, out var pid) ? pid : 0,
-                Ownership = OwnershipBox.Text.Trim(),
-                MessageType = int.TryParse(MessageTypeBox.Text, out var mt) ? mt : 0,
-                SambaPath = SambaPathBox.Text.Trim(),
-                SambaUsername = SambaUsernameBox.Text.Trim(),
-                LdapServer = LdapServerBox.Text.Trim(),
-                LdapBaseDN = LdapBaseDNBox.Text.Trim(),
+                PlatformId   = int.TryParse(PlatformIdBox.Text,   out var pid) ? pid : 0,
+                Ownership    = OwnershipBox.Text.Trim(),
+                MessageType  = int.TryParse(MessageTypeBox.Text,  out var mt)  ? mt  : 0,
+                SambaPath    = SambaPathBox.Text.Trim(),
+                SambaUsername= SambaUsernameBox.Text.Trim(),
                 IsConfigured = true,
-                IsTestMode = ConfigManager.Instance.IsTestMode
+                IsTestMode   = ConfigManager.Instance.IsTestMode
             };
 
             ConfigManager.Instance.Save(cfg, SambaPasswordBox.Password);
@@ -72,8 +68,6 @@ namespace EnrollMacsWSO.Views
                 SambaPathBox.Text = "";
                 SambaUsernameBox.Text = "";
                 SambaPasswordBox.Password = "";
-                LdapServerBox.Text = "";
-                LdapBaseDNBox.Text = "";
                 MessageBox.Show("Configuration effacée.", "OK", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }

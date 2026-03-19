@@ -1,4 +1,4 @@
-using Novell.Directory.Ldap;
+using System.DirectoryServices;
 
 namespace EnrollMacsWSO.Services
 {
@@ -8,52 +8,46 @@ namespace EnrollMacsWSO.Services
 
     public static class LdapService
     {
+        /// <summary>
+        /// Équivalent C# de :
+        ///   ([adsisearcher]"(&(objectClass=user)(sAMAccountName=USERNAME))").FindOne().Properties.mail
+        /// Utilise le DC du domaine joint — aucune configuration LDAP requise.
+        /// </summary>
         public static Task<LdapResult> FetchEmailAsync(string username)
         {
             return Task.Run(() =>
             {
-                var config = ConfigManager.Instance.Load();
-
-                if (string.IsNullOrWhiteSpace(config.LdapServer) || string.IsNullOrWhiteSpace(username))
+                if (string.IsNullOrWhiteSpace(username))
                     return new LdapResult(LdapResultType.Error);
 
                 try
                 {
-                    // Parse host and port from ldap(s)://host:port
-                    var uri = new Uri(config.LdapServer);
-                    string host = uri.Host;
-                    int port = uri.IsDefaultPort
-                        ? (uri.Scheme == "ldaps" ? 636 : 389)
-                        : uri.Port;
-                    bool useSsl = uri.Scheme == "ldaps";
+                    string filter = $"(&(objectClass=user)(sAMAccountName={EscapeLdap(username)}))";
 
-                    using var conn = new LdapConnection();
-                    conn.SecureSocketLayer = useSsl;
-                    conn.Connect(host, port);
-                    conn.Bind("", ""); // anonymous bind
+                    using var searcher = new DirectorySearcher
+                    {
+                        Filter     = filter,
+                        PageSize   = 1,
+                    };
+                    searcher.PropertiesToLoad.Add("mail");
+                    searcher.PropertiesToLoad.Add("sAMAccountName");
 
-                    string filter = $"(uid={EscapeLdap(username)})";
-                    string baseDn = string.IsNullOrWhiteSpace(config.LdapBaseDN)
-                        ? "o=epfl,c=ch"
-                        : config.LdapBaseDN;
+                    SearchResult? result = searcher.FindOne();
 
-                    var searchResults = conn.Search(
-                        baseDn,
-                        LdapConnection.ScopeSub,
-                        filter,
-                        new[] { "mail" },
-                        false);
-
-                    if (!searchResults.HasMore())
+                    // Compte introuvable dans l'AD
+                    if (result == null)
                         return new LdapResult(LdapResultType.NotFound);
 
-                    var entry = searchResults.Next();
-                    var mailAttr = entry.GetAttribute("mail");
+                    // Compte trouvé — cherche l'attribut mail
+                    if (result.Properties["mail"].Count > 0)
+                    {
+                        string mail = result.Properties["mail"][0]?.ToString() ?? "";
+                        if (!string.IsNullOrWhiteSpace(mail))
+                            return new LdapResult(LdapResultType.Found, mail);
+                    }
 
-                    if (mailAttr == null || string.IsNullOrWhiteSpace(mailAttr.StringValue))
-                        return new LdapResult(LdapResultType.NoMail);
-
-                    return new LdapResult(LdapResultType.Found, mailAttr.StringValue);
+                    // Compte trouvé mais pas de mail
+                    return new LdapResult(LdapResultType.NoMail);
                 }
                 catch
                 {
@@ -62,14 +56,13 @@ namespace EnrollMacsWSO.Services
             });
         }
 
-        private static string EscapeLdap(string input)
-        {
-            return input
+        // Échappe les caractères spéciaux LDAP (RFC 4515)
+        private static string EscapeLdap(string input) =>
+            input
                 .Replace("\\", "\\5c")
-                .Replace("*", "\\2a")
-                .Replace("(", "\\28")
-                .Replace(")", "\\29")
+                .Replace("*",  "\\2a")
+                .Replace("(",  "\\28")
+                .Replace(")",  "\\29")
                 .Replace("\0", "\\00");
-        }
     }
 }
